@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import axios from 'axios';
 import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
 (async () => {
@@ -31,7 +32,7 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
   /**************************************************************************** */
 
   //! END @TODO1
-  //app.get("/filteredimage", async(req, res) => {})
+
   app.get("/filteredimage", async (req, res) => {
     console.log("in");
     let { image_url } = req.query;
@@ -42,8 +43,14 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
       return res.status(400).send(`Inavlid url! Try again with valid url`);
     }
 
+    let response = await axios({
+      method: 'get',
+      url: image_url,
+      responseType: 'arraybuffer'
+    });
+
     //Process Image
-    const filteredImage = await filterImageFromURL(image_url);
+    const filteredImage = await filterImageFromURL(response.data);
     if (filteredImage === undefined || filteredImage === null) {
       return res.status(400).send(`Unable to filter image`);
     }
