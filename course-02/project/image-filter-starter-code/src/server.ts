@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import express, {Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import axios from 'axios';
@@ -54,8 +56,16 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
       return res.status(400).send(`Unable to filter image`);
     }
 
-    return res.status(200).sendFile(filteredImage + '');
-  })
+    res.on('finish', async () => {
+      const dir = __dirname + '/util/tmp';
+      let files = fs.readdirSync(dir).map((file) => {
+        return path.join(dir, file);
+      })
+      await deleteLocalFiles(files);
+    });
+
+    res.status(200).sendFile(filteredImage + '');
+  });
   // Root Endpoint
   // Displays a simple message to the user
   app.get("/", async (req, res) => {
