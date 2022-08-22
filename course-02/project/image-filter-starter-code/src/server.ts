@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import axios from 'axios';
 import { filterImageFromURL, deleteLocalFiles } from './util/util';
@@ -33,9 +33,8 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
   //! END @TODO1
 
-  app.get("/filteredimage", async (req, res) => {
-    console.log("in");
-    let { image_url } = req.query;
+  app.get("/filteredimage", async (req: Request, res: Response) => {
+    let image_url = req.query.image_url as string;
     //Validate url
     const isValideUrl = image_url.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
 
